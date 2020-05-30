@@ -23,9 +23,19 @@ public class Alarm {
         this.mOn = on;
     }
 
-    public String getMDate(){return this.mDate;}
+    public String getMDate() {return this.mDate;}
 
     public String getMTime() {return mTime;}
 
     public boolean isMOn() {return mOn; }
+
+    public int getHour() {return Integer.parseInt(this.mTime.substring(0,2));}
+
+    public int getMinute() {return Integer.parseInt(this.mTime.substring(2,4));}
+
+    public int getYear() {return Integer.parseInt(this.mDate.substring(0,4));}
+
+    public int getMonth() {return Integer.parseInt(this.mDate.substring(4,6));}
+
+    public int getDay() {return Integer.parseInt(this.mDate.substring(6,8));}
 }
