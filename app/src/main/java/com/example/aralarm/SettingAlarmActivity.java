@@ -16,7 +16,8 @@ import java.io.Serializable;
 
 public class SettingAlarmActivity extends AppCompatActivity {
 
-    public static final String EXTRA_REPLY = "com.example.android.alarmlistsql.REPLY";
+    public static final String EXTRA_DATE = "extra_date";
+    public static final String EXTRA_TIME = "extra_time";
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -67,11 +68,12 @@ public class SettingAlarmActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 Intent replyIntent = new Intent();
-                Alarm alarm = new Alarm("" + datePicker.getDatePicker().getYear()
+                String date = "" + datePicker.getDatePicker().getYear()
                         + datePicker.getDatePicker().getMonth()
-                        + datePicker.getDatePicker().getDayOfMonth(),
-                        ""+timePicker.getHour()+timePicker.getMinute(),true );
-                replyIntent.putExtra(EXTRA_REPLY, (Serializable) alarm);
+                        + datePicker.getDatePicker().getDayOfMonth();
+                String time = ""+timePicker.getHour()+timePicker.getMinute();
+                replyIntent.putExtra(EXTRA_DATE, date);
+                replyIntent.putExtra(EXTRA_TIME, time);
                 setResult(RESULT_OK, replyIntent);
                 finish();
             }
