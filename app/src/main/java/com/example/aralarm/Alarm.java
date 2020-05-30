@@ -5,11 +5,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "alarm_table")
+@Entity(tableName = "alarm_table", primaryKeys = {"date", "time"})
 public class Alarm {
-
-    @PrimaryKey(autoGenerate = true)
-    public int id;
 
     @ColumnInfo(name = "date")
     private String mDate;
