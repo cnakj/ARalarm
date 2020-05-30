@@ -13,17 +13,17 @@ public class Alarm {
     @ColumnInfo(name = "time")
     private String mTime;
     @ColumnInfo(name = "isOn")
-    private boolean mIsOn;
+    private boolean mOn;
 
-    public Alarm(@NonNull String date, String time, boolean isOn){
+    public Alarm(@NonNull String date, String time, boolean on){
         this.mDate = date;
         this.mTime = time;
-        this.mIsOn = isOn;
+        this.mOn = on;
     }
 
     public String getmDate(){return this.mDate;}
 
     public String getmTime() {return mTime;}
 
-    public boolean ismIsOn() {return mIsOn; }
+    public boolean ismOn() {return mOn; }
 }
