@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             } else{
                 Toast.makeText(
                         getApplicationContext(),
-                        "Alarm not saved.",
+                        R.string.main_not_saved,
                         Toast.LENGTH_LONG).show();
             }
         }
