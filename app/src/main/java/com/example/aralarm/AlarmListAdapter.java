@@ -13,23 +13,23 @@ import java.util.List;
 
 public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder> {
 
-    class AlarmViewHolder extends RecyclerView.ViewHolder{
-        private final TextView dateView;
-        private final TextView timeView;
-        private final Switch on;
+    private List<Alarm> mAlarms;
+    private final LayoutInflater mInflater;
+    AlarmListAdapter(Context context) {mInflater = LayoutInflater.from(context);}
 
-        private AlarmViewHolder(View itemView){
-            super(itemView);
-            dateView = itemView.findViewById(R.id.txt_alarm_date);
-            timeView = itemView.findViewById(R.id.txt_alarm_time);
-            on = itemView.findViewById(R.id.switch_alarm);
-        }
+    private OnItemClickListener mListener = null;
+
+    public interface OnItemClickListener{
+        void onItemClick(View v, int position);
     }
 
-    private final LayoutInflater mInflater;
-    private List<Alarm> mAlarms;
+    public void setOnItemClickListener(OnItemClickListener listener){
+        mListener = listener;
+    }
 
-    AlarmListAdapter(Context context) {mInflater = LayoutInflater.from(context);}
+    public Alarm getAlarm(int pos){
+        return mAlarms.get(pos);
+    }
 
     @Override
     public AlarmViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
@@ -42,7 +42,10 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
         if(mAlarms != null){
             Alarm current = mAlarms.get(position);
             holder.dateView.setText(current.getYear() + "년 " + current.getMonth() + "월 " + current.getDay() + "일");
-            holder.timeView.setText(current.getHour() + "시 " + current.getMinute() + "분");
+            if(Integer.parseInt(current.getHour()) < 13)
+                holder.timeView.setText("오전 " + current.getHour() + "시 " + current.getMinute() + "분");
+            else
+                holder.timeView.setText("오후 " + (Integer.parseInt(current.getHour()) - 12) + "시 " + current.getMinute() + "분");
             holder.on.setChecked(current.isOn());
         } else{
             holder.dateView.setText("No Date");
@@ -61,5 +64,28 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
         if(mAlarms != null)
             return mAlarms.size();
         else return 0;
+    }
+
+    class AlarmViewHolder extends RecyclerView.ViewHolder{
+        private final TextView dateView;
+        private final TextView timeView;
+        private final Switch on;
+
+        private AlarmViewHolder(View itemView){
+            super(itemView);
+            dateView = itemView.findViewById(R.id.txt_alarm_date);
+            timeView = itemView.findViewById(R.id.txt_alarm_time);
+            on = itemView.findViewById(R.id.switch_alarm);
+
+            itemView.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION)
+                        if(mListener != null)
+                            mListener.onItemClick(v, pos);
+                }
+            });
+        }
     }
 }

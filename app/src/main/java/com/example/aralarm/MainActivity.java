@@ -16,6 +16,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
+import static com.example.aralarm.SettingAlarmActivity.RETURN_ALARM;
+
 public class MainActivity extends AppCompatActivity {
 
     private AlarmViewModel mAlarmViewModel;
@@ -32,41 +34,45 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAlarmViewModel = new ViewModelProvider(this).get(AlarmViewModel.class);
 
-        mAlarmViewModel.getAllAlarms().observe(this, new Observer<List<Alarm>>() {
-            @Override
-            public void onChanged(@Nullable final List<Alarm> alarms) {
-                adapter.setAlarms(alarms);
-            }
-        });
+        mAlarmViewModel.getAllAlarms().observe(this, alarms -> adapter.setAlarms(alarms));
 
         FloatingActionButton addButton = findViewById(R.id.btn_main_add);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        addButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SettingAlarmActivity.class);
+            startActivityForResult(intent, NEW_ALARM_ACTIVITY_REQUEST_CODE);
+        });
+
+        adapter.setOnItemClickListener(new AlarmListAdapter.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onItemClick(View v, int position) {
                 Intent intent = new Intent(MainActivity.this, SettingAlarmActivity.class);
+                Alarm alarm = adapter.getAlarm(position);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("alarm", alarm);
+                intent.putExtras(bundle);
                 startActivityForResult(intent, NEW_ALARM_ACTIVITY_REQUEST_CODE);
             }
         });
     }
 
+
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == NEW_ALARM_ACTIVITY_REQUEST_CODE) {
-            if(resultCode == RESULT_OK){
-                Alarm alarm = new Alarm(
-                        data.getStringExtra(SettingAlarmActivity.EXTRA_YEAR),
-                        data.getStringExtra(SettingAlarmActivity.EXTRA_MONTH),
-                        data.getStringExtra(SettingAlarmActivity.EXTRA_DAY),
-                        data.getStringExtra(SettingAlarmActivity.EXTRA_HOUR),
-                        data.getStringExtra(SettingAlarmActivity.EXTRA_MINUTE), true);
+        if(resultCode == RESULT_OK){
+            Bundle returnBundle = data.getExtras();
+            assert returnBundle != null;
+            Alarm alarm = (Alarm) returnBundle.getSerializable(RETURN_ALARM);
+            if(requestCode == NEW_ALARM_ACTIVITY_REQUEST_CODE)
                 mAlarmViewModel.insert(alarm);
-            } else{
-                Toast.makeText(
-                        getApplicationContext(),
-                        R.string.main_not_saved,
-                        Toast.LENGTH_LONG).show();
-            }
+            else if(requestCode == CHANGE_ALARM_ACTIVITY_REQUEST_CODE)
+                mAlarmViewModel.update(alarm);
+        }
+        else if(resultCode == RESULT_CANCELED){
+            Toast.makeText(
+                    getApplicationContext(),
+                    R.string.main_not_saved,
+                    Toast.LENGTH_LONG).show();
         }
     }
 

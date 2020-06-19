@@ -24,4 +24,10 @@ class AlarmRepository {
             mAlarmDao.insert(alarm);
         });
     }
+
+    void update(Alarm alarm){
+        AlarmRoomDatabase.databaseWriteExecutor.execute(() ->{
+            mAlarmDao.update(alarm);
+        });
+    }
 }

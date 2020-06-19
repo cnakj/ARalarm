@@ -5,14 +5,18 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
 @Dao
 public interface AlarmDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Alarm alarm);
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    void update(Alarm alarm);
 
     @Query("DELETE FROM alarm_table")
     void deleteAll();

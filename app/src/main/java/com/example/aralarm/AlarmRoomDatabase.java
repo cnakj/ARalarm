@@ -30,6 +30,4 @@ public abstract class AlarmRoomDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
-
-
 }

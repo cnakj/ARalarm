@@ -22,4 +22,6 @@ public class AlarmViewModel extends AndroidViewModel {
     LiveData<List<Alarm>> getAllAlarms() {return mAllAlarms;}
 
     public void insert(Alarm alarm){mRepository.insert(alarm);}
+
+    public void update(Alarm alarm){mRepository.update(alarm);}
 }

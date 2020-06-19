@@ -13,14 +13,11 @@ import android.widget.TimePicker;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class SettingAlarmActivity extends AppCompatActivity {
 
-    public static final String EXTRA_YEAR = "extra_year";
-    public static final String EXTRA_MONTH = "extra_month";
-    public static final String EXTRA_DAY = "extra_day";
-    public static final String EXTRA_HOUR = "extra_hour";
-    public static final String EXTRA_MINUTE = "extra_minute";
+    public static final String RETURN_ALARM = "return_alarm";
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -34,14 +31,17 @@ public class SettingAlarmActivity extends AppCompatActivity {
                 -> dateText.setText(year+"년 " + (month+1) +"월 " +dayOfMonth+"일");
 
         Bundle bundle = getIntent().getExtras();
+        String returnId;
         if(bundle != null){
-            Alarm item = (Alarm) bundle.getSerializable("item");
+            Alarm item = (Alarm) bundle.getSerializable("alarm");
+            returnId = item.getId();
             timePicker.setHour(Integer.parseInt(item.getHour()));
             timePicker.setMinute(Integer.parseInt(item.getMinute()));
             dateText.setText(item.getYear() + "년 " + item.getMonth() + "월 " + item.getDay() + "일");
             datePicker.updateDate(Integer.parseInt(item.getYear()), Integer.parseInt(item.getMonth())-1, Integer.parseInt(item.getDay()));
         }
         else{
+            returnId = UUID.randomUUID().toString();
             dateText.setText(datePicker.getDatePicker().getYear()+"년 "+(datePicker.getDatePicker().getMonth()+1)+"월 "+datePicker.getDatePicker().getDayOfMonth()+"일");
         }
         calendarButton.setOnClickListener(v -> {
@@ -58,19 +58,17 @@ public class SettingAlarmActivity extends AppCompatActivity {
 
         final Button saveButton = findViewById(R.id.btn_setting_save);
         saveButton.setOnClickListener(view -> {
-            Intent replyIntent = new Intent();
-
-            String year = "" + datePicker.getDatePicker().getYear();
-            String month = "" + (datePicker.getDatePicker().getMonth() + 1);
-            String day = "" + datePicker.getDatePicker().getDayOfMonth();
-            String hour = "" + timePicker.getHour();
-            String minute = "" + timePicker.getMinute();
-            replyIntent.putExtra(EXTRA_YEAR, year);
-            replyIntent.putExtra(EXTRA_MONTH, month);
-            replyIntent.putExtra(EXTRA_DAY, day);
-            replyIntent.putExtra(EXTRA_HOUR, hour);
-            replyIntent.putExtra(EXTRA_MINUTE, minute);
-            setResult(RESULT_OK, replyIntent);
+            Intent returnIntent = new Intent();
+            Bundle returnBundle = new Bundle();
+            Alarm returnAlarm = new Alarm(returnId,
+                    datePicker.getDatePicker().getYear(),
+                    datePicker.getDatePicker().getMonth() + 1,
+                    datePicker.getDatePicker().getDayOfMonth(),
+                    timePicker.getHour(),
+                    timePicker.getMinute(), true);
+            returnBundle.putSerializable(RETURN_ALARM, returnAlarm);
+            returnIntent.putExtras(returnBundle);
+            setResult(RESULT_OK, returnIntent);
             finish();
         });
     }
