@@ -31,6 +31,5 @@ public abstract class AlarmRoomDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    // call back 안씀.
 
 }

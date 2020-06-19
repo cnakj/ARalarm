@@ -41,9 +41,9 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
     public void onBindViewHolder(AlarmViewHolder holder, int position){
         if(mAlarms != null){
             Alarm current = mAlarms.get(position);
-            holder.dateView.setText(current.getMDate());
-            holder.timeView.setText(current.getMTime());
-            holder.on.setChecked(current.isMOn());
+            holder.dateView.setText(current.getYear() + "년 " + current.getMonth() + "월 " + current.getDay() + "일");
+            holder.timeView.setText(current.getHour() + "시 " + current.getMinute() + "분");
+            holder.on.setChecked(current.isOn());
         } else{
             holder.dateView.setText("No Date");
             holder.timeView.setText("No Time");

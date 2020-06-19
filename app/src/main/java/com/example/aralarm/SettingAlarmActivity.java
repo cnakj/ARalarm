@@ -16,8 +16,11 @@ import java.io.Serializable;
 
 public class SettingAlarmActivity extends AppCompatActivity {
 
-    public static final String EXTRA_DATE = "extra_date";
-    public static final String EXTRA_TIME = "extra_time";
+    public static final String EXTRA_YEAR = "extra_year";
+    public static final String EXTRA_MONTH = "extra_month";
+    public static final String EXTRA_DAY = "extra_day";
+    public static final String EXTRA_HOUR = "extra_hour";
+    public static final String EXTRA_MINUTE = "extra_minute";
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -38,45 +41,44 @@ public class SettingAlarmActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
             Alarm item = (Alarm) bundle.getSerializable("item");
-            timePicker.setHour(item.getHour());
-            timePicker.setMinute(item.getMinute());
-            dateText.setText(item.getMDate());
-            datePicker = new DatePickerDialog(this, listener, item.getYear(), item.getMonth()-1, item.getDay());
+            timePicker.setHour(Integer.parseInt(item.getHour()));
+            timePicker.setMinute(Integer.parseInt(item.getMinute()));
+            dateText.setText(item.getYear() + "년 " + item.getMonth() + "월 " + item.getDay() + "일");
+            datePicker = new DatePickerDialog(this, listener,
+                    Integer.parseInt(item.getYear()), Integer.parseInt(item.getMonth()), Integer.parseInt(item.getDay()));
         }
         else{
             datePicker = new DatePickerDialog(this);
             datePicker.setOnDateSetListener(listener);
         }
-        calendarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
-                datePicker.show();
-            }
+        calendarButton.setOnClickListener(v -> {
+            datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
+            datePicker.show();
         });
 
         final Button cancelButton = findViewById(R.id.btn_setting_cancel);
-        cancelButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View view){
-                Intent replyIntent = new Intent();
-                setResult(RESULT_CANCELED, replyIntent);
-                finish();
-            }
+        cancelButton.setOnClickListener(view -> {
+            Intent replyIntent = new Intent();
+            setResult(RESULT_CANCELED, replyIntent);
+            finish();
         });
 
         final Button saveButton = findViewById(R.id.btn_setting_save);
-        saveButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View view){
-                Intent replyIntent = new Intent();
-                String date = "" + datePicker.getDatePicker().getYear()
-                        + datePicker.getDatePicker().getMonth()
-                        + datePicker.getDatePicker().getDayOfMonth();
-                String time = ""+timePicker.getHour()+timePicker.getMinute();
-                replyIntent.putExtra(EXTRA_DATE, date);
-                replyIntent.putExtra(EXTRA_TIME, time);
-                setResult(RESULT_OK, replyIntent);
-                finish();
-            }
+        saveButton.setOnClickListener(view -> {
+            Intent replyIntent = new Intent();
+
+            String year = "" + datePicker.getDatePicker().getYear();
+            String month = "" + (datePicker.getDatePicker().getMonth() + 1);
+            String day = "" + datePicker.getDatePicker().getDayOfMonth();
+            String hour = "" + timePicker.getHour();
+            String minute = "" + timePicker.getMinute();
+            replyIntent.putExtra(EXTRA_YEAR, year);
+            replyIntent.putExtra(EXTRA_MONTH, month);
+            replyIntent.putExtra(EXTRA_DAY, day);
+            replyIntent.putExtra(EXTRA_HOUR, hour);
+            replyIntent.putExtra(EXTRA_MINUTE, minute);
+            setResult(RESULT_OK, replyIntent);
+            finish();
         });
     }
 }

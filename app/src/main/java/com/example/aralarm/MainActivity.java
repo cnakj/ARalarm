@@ -54,8 +54,12 @@ public class MainActivity extends AppCompatActivity {
 
         if(requestCode == NEW_ALARM_ACTIVITY_REQUEST_CODE) {
             if(resultCode == RESULT_OK){
-                Alarm alarm = new Alarm(data.getStringExtra(SettingAlarmActivity.EXTRA_DATE),
-                        data.getStringExtra(SettingAlarmActivity.EXTRA_TIME), true);
+                Alarm alarm = new Alarm(
+                        data.getStringExtra(SettingAlarmActivity.EXTRA_YEAR),
+                        data.getStringExtra(SettingAlarmActivity.EXTRA_MONTH),
+                        data.getStringExtra(SettingAlarmActivity.EXTRA_DAY),
+                        data.getStringExtra(SettingAlarmActivity.EXTRA_HOUR),
+                        data.getStringExtra(SettingAlarmActivity.EXTRA_MINUTE), true);
                 mAlarmViewModel.insert(alarm);
             } else{
                 Toast.makeText(

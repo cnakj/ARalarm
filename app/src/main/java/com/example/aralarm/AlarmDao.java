@@ -17,6 +17,6 @@ public interface AlarmDao {
     @Query("DELETE FROM alarm_table")
     void deleteAll();
 
-    @Query("SELECT * FROM alarm_table ORDER BY date, time")
+    @Query("SELECT * FROM alarm_table ORDER BY year, month, day, hour, minute")
     LiveData<List<Alarm>> getOrderedWords();
 }
