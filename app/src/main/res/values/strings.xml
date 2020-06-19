@@ -4,7 +4,7 @@
     <string name="main_all_off">예정된 알람이 없습니다.</string>
     <string name="main_num_on">%d개의 알람이 켜져있습니다.</string>
     <string name="main_add">추가</string>
-    <string name="setting_calendar">날짜를 선택해주세요.</string>
+    <string name="setting_calendar">날짜선택</string>
     <string name="setting_cancel">취소</string>
     <string name="setting_save">저장</string>
     <string name="main_not_saved">알람이 저장되지 않았습니다.</string>

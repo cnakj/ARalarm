@@ -28,7 +28,6 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:padding="20dp"
-        android:text="@string/setting_calendar"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@id/btn_setting_calendar"
         app:layout_constraintStart_toStartOf="parent"

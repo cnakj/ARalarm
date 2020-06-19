@@ -26,17 +26,12 @@ public class SettingAlarmActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        final DatePickerDialog datePicker;
         final TimePicker timePicker = findViewById(R.id.picker_setting_time);
         final TextView dateText = findViewById(R.id.txt_setting_calendar);
         ImageButton calendarButton = findViewById(R.id.btn_setting_calendar);
-
-        DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                dateText.setText(year+"년 " + (month+1) +"월 " +dayOfMonth+"일");
-            }
-        };
+        final DatePickerDialog datePicker = new DatePickerDialog(this);
+        DatePickerDialog.OnDateSetListener listener = (view, year, month, dayOfMonth)
+                -> dateText.setText(year+"년 " + (month+1) +"월 " +dayOfMonth+"일");
 
         Bundle bundle = getIntent().getExtras();
         if(bundle != null){
@@ -44,12 +39,10 @@ public class SettingAlarmActivity extends AppCompatActivity {
             timePicker.setHour(Integer.parseInt(item.getHour()));
             timePicker.setMinute(Integer.parseInt(item.getMinute()));
             dateText.setText(item.getYear() + "년 " + item.getMonth() + "월 " + item.getDay() + "일");
-            datePicker = new DatePickerDialog(this, listener,
-                    Integer.parseInt(item.getYear()), Integer.parseInt(item.getMonth()), Integer.parseInt(item.getDay()));
+            datePicker.updateDate(Integer.parseInt(item.getYear()), Integer.parseInt(item.getMonth())-1, Integer.parseInt(item.getDay()));
         }
         else{
-            datePicker = new DatePickerDialog(this);
-            datePicker.setOnDateSetListener(listener);
+            dateText.setText(datePicker.getDatePicker().getYear()+"년 "+(datePicker.getDatePicker().getMonth()+1)+"월 "+datePicker.getDatePicker().getDayOfMonth()+"일");
         }
         calendarButton.setOnClickListener(v -> {
             datePicker.getDatePicker().setMinDate(System.currentTimeMillis());
