@@ -19,6 +19,8 @@ class AlarmRepository {
 
     LiveData<List<Alarm>> getAllAlarm() {return mAllAlarm;}
 
+    LiveData<Integer> getOnNum(){ return mAlarmDao.getOnAlarms();}
+
     void insert(Alarm alarm){
         AlarmRoomDatabase.databaseWriteExecutor.execute(() ->{
             mAlarmDao.insert(alarm);

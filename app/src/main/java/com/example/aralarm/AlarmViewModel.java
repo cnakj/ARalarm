@@ -26,4 +26,6 @@ public class AlarmViewModel extends AndroidViewModel {
     public void update(Alarm alarm){mRepository.update(alarm);}
 
     public void delete(Alarm alarm){mRepository.delete(alarm);}
+
+    LiveData<Integer> getOnAlarms(){return mRepository.getOnNum();}
 }

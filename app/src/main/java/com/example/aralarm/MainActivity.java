@@ -1,25 +1,18 @@
 package com.example.aralarm;
 
-import androidx.annotation.Nullable;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
 
 import static com.example.aralarm.SettingAlarmActivity.RETURN_ALARM;
 
@@ -33,11 +26,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TextView onNumText =findViewById(R.id.txt_main_alarm_num);
         RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
         final AlarmListAdapter adapter = new AlarmListAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAlarmViewModel = new ViewModelProvider(this).get(AlarmViewModel.class);
+
+        mAlarmViewModel.getOnAlarms().observe(this, onNum -> {
+            Resources res = getResources();
+            if(onNum<=0)
+                onNumText.setText(R.string.main_all_off);
+            else
+                onNumText.setText(String.format(res.getString(R.string.main_num_on),onNum));
+        });
 
         mAlarmViewModel.getAllAlarms().observe(this, adapter::setAlarms);
 
@@ -68,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             });
 
             AlertDialog alertDialog = builder.create();
-
             alertDialog.show();
         });
 
@@ -91,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
                 mAlarmViewModel.insert(alarm);
             else if(requestCode == CHANGE_ALARM_ACTIVITY_REQUEST_CODE)
                 mAlarmViewModel.update(alarm);
+
+            Toast.makeText(getApplicationContext(), R.string.main_saved, Toast.LENGTH_LONG).show();
         }
         else if(resultCode == RESULT_CANCELED){
             Toast.makeText(getApplicationContext(), R.string.main_not_saved, Toast.LENGTH_LONG).show();

@@ -27,4 +27,7 @@ public interface AlarmDao {
 
     @Query("SELECT * FROM alarm_table ORDER BY year, month, day, hour, minute")
     LiveData<List<Alarm>> getOrderedWords();
+
+    @Query("SELECT COUNT(*) FROM alarm_table WHERE isOn = 1")
+    LiveData<Integer> getOnAlarms();
 }
