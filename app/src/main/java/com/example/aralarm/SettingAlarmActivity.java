@@ -27,8 +27,8 @@ public class SettingAlarmActivity extends AppCompatActivity {
         final TextView dateText = findViewById(R.id.txt_setting_calendar);
         ImageButton calendarButton = findViewById(R.id.btn_setting_calendar);
         final DatePickerDialog datePicker = new DatePickerDialog(this);
-        DatePickerDialog.OnDateSetListener listener = (view, year, month, dayOfMonth)
-                -> dateText.setText(year+"년 " + (month+1) +"월 " +dayOfMonth+"일");
+        DatePickerDialog.OnDateSetListener listener = (view, year, month, dayOfMonth) -> dateText.setText(year + "년 " + (month + 1) + "월 " + dayOfMonth + "일");
+        datePicker.setOnDateSetListener(listener);
 
         Bundle bundle = getIntent().getExtras();
         String returnId;
