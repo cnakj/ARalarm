@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAlarmViewModel = new ViewModelProvider(this).get(AlarmViewModel.class);
 
-        mAlarmViewModel.getAllAlarms().observe(this, alarms -> adapter.setAlarms(alarms));
+        mAlarmViewModel.getAllAlarms().observe(this, adapter::setAlarms);
 
         FloatingActionButton addButton = findViewById(R.id.btn_main_add);
         addButton.setOnClickListener(v -> {
@@ -58,18 +58,24 @@ public class MainActivity extends AppCompatActivity {
 
         adapter.setOnItemLongClickListener((v, position) -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("알람을 삭제합니다");
-            builder.setPositiveButton("확인", (dialog, which) -> {
+            builder.setMessage(R.string.delete_alarm);
+            builder.setPositiveButton(R.string.delete_ok, (dialog, which) -> {
                 Alarm alarm = adapter.getAlarm(position);
                 mAlarmViewModel.delete(alarm);
             });
-            builder.setNegativeButton("취소", (dialog, which) -> {
+            builder.setNegativeButton(R.string.delete_no, (dialog, which) -> {
                 //취소
             });
 
             AlertDialog alertDialog = builder.create();
 
             alertDialog.show();
+        });
+
+        adapter.setOnSwitchClickListener((v, position) -> {
+            Alarm alarm = adapter.getAlarm(position);
+            alarm.toggle(!alarm.isOn());
+            mAlarmViewModel.update(alarm);
         });
     }
 
@@ -87,10 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 mAlarmViewModel.update(alarm);
         }
         else if(resultCode == RESULT_CANCELED){
-            Toast.makeText(
-                    getApplicationContext(),
-                    R.string.main_not_saved,
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.main_not_saved, Toast.LENGTH_LONG).show();
         }
     }
 

@@ -19,13 +19,15 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
 
     private OnItemClickListener mListener = null;
     public interface OnItemClickListener{ void onItemClick(View v, int position); }
-    public void setOnItemClickListener(OnItemClickListener listener){
-        mListener = listener;
-    }
+    public void setOnItemClickListener(OnItemClickListener listener){ mListener = listener; }
 
     private OnItemLongClickListener mLongListener = null;
     public interface OnItemLongClickListener{ void onItemLongClick(View v, int position); }
     public void setOnItemLongClickListener(OnItemLongClickListener listener){ mLongListener = listener; }
+
+    private OnSwitchClickListener mSwitchListener = null;
+    public interface OnSwitchClickListener{ void onSwitchClick(View v, int position); }
+    public void setOnSwitchClickListener(OnSwitchClickListener listener){ mSwitchListener = listener;}
 
     public Alarm getAlarm(int pos){
         return mAlarms.get(pos);
@@ -84,15 +86,19 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
                         mListener.onItemClick(v, pos);
             });
 
-            itemView.setOnLongClickListener(new View.OnLongClickListener(){
-                @Override
-                public boolean onLongClick(View v){
-                    int pos = getAdapterPosition();
-                    if(pos != RecyclerView.NO_POSITION)
-                        if(mLongListener != null)
-                            mLongListener.onItemLongClick(v, pos);
-                    return true;
-                }
+            itemView.setOnLongClickListener(v -> {
+                int pos = getAdapterPosition();
+                if(pos != RecyclerView.NO_POSITION)
+                    if(mLongListener != null)
+                        mLongListener.onItemLongClick(v, pos);
+                return true;
+            });
+
+            on.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if(pos != RecyclerView.NO_POSITION)
+                    if(mSwitchListener != null)
+                        mSwitchListener.onSwitchClick(v, pos);
             });
         }
     }

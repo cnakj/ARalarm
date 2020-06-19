@@ -8,4 +8,7 @@
     <string name="setting_cancel">취소</string>
     <string name="setting_save">저장</string>
     <string name="main_not_saved">알람이 저장되지 않았습니다.</string>
+    <string name="delete_alarm">알람을 삭제합니다</string>
+    <string name="delete_ok">확인</string>
+    <string name="delete_no">취소</string>
 </resources>

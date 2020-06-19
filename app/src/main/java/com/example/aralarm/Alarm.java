@@ -72,4 +72,5 @@ public class Alarm implements Serializable {
 
     public boolean isOn() { return mOn; }
 
+    public void toggle(boolean mOn) { this.mOn = mOn; }
 }
