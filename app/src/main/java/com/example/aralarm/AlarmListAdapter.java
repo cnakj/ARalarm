@@ -18,14 +18,14 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
     AlarmListAdapter(Context context) {mInflater = LayoutInflater.from(context);}
 
     private OnItemClickListener mListener = null;
-
-    public interface OnItemClickListener{
-        void onItemClick(View v, int position);
-    }
-
+    public interface OnItemClickListener{ void onItemClick(View v, int position); }
     public void setOnItemClickListener(OnItemClickListener listener){
         mListener = listener;
     }
+
+    private OnItemLongClickListener mLongListener = null;
+    public interface OnItemLongClickListener{ void onItemLongClick(View v, int position); }
+    public void setOnItemLongClickListener(OnItemLongClickListener listener){ mLongListener = listener; }
 
     public Alarm getAlarm(int pos){
         return mAlarms.get(pos);
@@ -77,13 +77,21 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
             timeView = itemView.findViewById(R.id.txt_alarm_time);
             on = itemView.findViewById(R.id.switch_alarm);
 
-            itemView.setOnClickListener(new View.OnClickListener(){
+            itemView.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if(pos != RecyclerView.NO_POSITION)
+                    if(mListener != null)
+                        mListener.onItemClick(v, pos);
+            });
+
+            itemView.setOnLongClickListener(new View.OnLongClickListener(){
                 @Override
-                public void onClick(View v){
+                public boolean onLongClick(View v){
                     int pos = getAdapterPosition();
                     if(pos != RecyclerView.NO_POSITION)
-                        if(mListener != null)
-                            mListener.onItemClick(v, pos);
+                        if(mLongListener != null)
+                            mLongListener.onItemLongClick(v, pos);
+                    return true;
                 }
             });
         }

@@ -2,11 +2,16 @@ package com.example.aralarm;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -42,16 +47,29 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, NEW_ALARM_ACTIVITY_REQUEST_CODE);
         });
 
-        adapter.setOnItemClickListener(new AlarmListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View v, int position) {
-                Intent intent = new Intent(MainActivity.this, SettingAlarmActivity.class);
+        adapter.setOnItemClickListener((v, position) -> {
+            Intent intent = new Intent(MainActivity.this, SettingAlarmActivity.class);
+            Alarm alarm = adapter.getAlarm(position);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("alarm", alarm);
+            intent.putExtras(bundle);
+            startActivityForResult(intent, NEW_ALARM_ACTIVITY_REQUEST_CODE);
+        });
+
+        adapter.setOnItemLongClickListener((v, position) -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("알람을 삭제합니다");
+            builder.setPositiveButton("확인", (dialog, which) -> {
                 Alarm alarm = adapter.getAlarm(position);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("alarm", alarm);
-                intent.putExtras(bundle);
-                startActivityForResult(intent, NEW_ALARM_ACTIVITY_REQUEST_CODE);
-            }
+                mAlarmViewModel.delete(alarm);
+            });
+            builder.setNegativeButton("취소", (dialog, which) -> {
+                //취소
+            });
+
+            AlertDialog alertDialog = builder.create();
+
+            alertDialog.show();
         });
     }
 

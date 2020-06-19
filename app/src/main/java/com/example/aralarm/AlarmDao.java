@@ -2,6 +2,7 @@ package com.example.aralarm;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -17,6 +18,9 @@ public interface AlarmDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void update(Alarm alarm);
+
+    @Delete
+    void delete(Alarm alarm);
 
     @Query("DELETE FROM alarm_table")
     void deleteAll();

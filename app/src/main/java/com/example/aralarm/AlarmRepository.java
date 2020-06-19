@@ -30,4 +30,10 @@ class AlarmRepository {
             mAlarmDao.update(alarm);
         });
     }
+
+    void delete(Alarm alarm){
+        AlarmRoomDatabase.databaseWriteExecutor.execute(() ->{
+            mAlarmDao.delete(alarm);
+        });
+    }
 }
