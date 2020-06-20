@@ -1,8 +1,14 @@
-package com.example.aralarm;
+package com.example.aralarm.activity;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,9 +18,17 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.aralarm.data.Alarm;
+import com.example.aralarm.ui.AlarmListAdapter;
+import com.example.aralarm.notification.AlarmReceiver;
+import com.example.aralarm.ui.AlarmViewModel;
+import com.example.aralarm.notification.DeviceBootReceiver;
+import com.example.aralarm.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import static com.example.aralarm.SettingAlarmActivity.RETURN_ALARM;
+import java.util.Calendar;
+
+import static com.example.aralarm.activity.SettingAlarmActivity.RETURN_ALARM;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
             Alarm alarm = adapter.getAlarm(position);
             alarm.toggle(!alarm.isOn());
             mAlarmViewModel.update(alarm);
+
+            if(alarm.isOn())
+                onAlarm(alarm);
+            else
+                offAlarm(alarm);
         });
     }
 
@@ -93,11 +112,59 @@ public class MainActivity extends AppCompatActivity {
             else if(requestCode == CHANGE_ALARM_ACTIVITY_REQUEST_CODE)
                 mAlarmViewModel.update(alarm);
 
-            Toast.makeText(getApplicationContext(), R.string.main_saved, Toast.LENGTH_LONG).show();
+            onAlarm(alarm);
         }
         else if(resultCode == RESULT_CANCELED){
-            Toast.makeText(getApplicationContext(), R.string.main_not_saved, Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.main_not_saved, Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    public void onAlarm(Alarm alarm){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(alarm.getIntYear(), alarm.getIntMonth() - 1, alarm.getIntDay(), alarm.getIntHour(), alarm.getIntMinute(), 0);
+
+        setAlarmNotification(calendar, alarm.getPendingId());
+    }
+
+    public void offAlarm(Alarm alarm){
+        unsetAlarmNotification(alarm.getPendingId());
+    }
+
+    public void setAlarmNotification(Calendar calendar, int requestCode) {
+
+        PackageManager pm = this.getPackageManager();
+        ComponentName receiver = new ComponentName(this, DeviceBootReceiver.class);
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, alarmIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        if (alarmManager != null) {
+            if(Build.VERSION.SDK_INT >= 23)
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            else
+                if(Build.VERSION.SDK_INT >= 19)
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                else
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+
+            pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+            Toast.makeText(getApplicationContext(), R.string.main_set, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void unsetAlarmNotification(int requestCode){
+        PackageManager pm = this.getPackageManager();
+        ComponentName receiver = new ComponentName(this, DeviceBootReceiver.class);
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, alarmIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        if (pendingIntent != null && alarmManager != null)
+            alarmManager.cancel(pendingIntent);
+
+        pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+        Toast.makeText(getApplicationContext(), R.string.main_unset, Toast.LENGTH_SHORT).show();
     }
 
 }

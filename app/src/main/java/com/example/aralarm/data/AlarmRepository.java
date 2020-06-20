@@ -1,4 +1,4 @@
-package com.example.aralarm;
+package com.example.aralarm.data;
 
 import android.app.Application;
 
@@ -6,34 +6,34 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-class AlarmRepository {
+public class AlarmRepository {
 
     private AlarmDao mAlarmDao;
     private LiveData<List<Alarm>> mAllAlarm;
 
-    AlarmRepository(Application application){
+    public AlarmRepository(Application application){
         AlarmRoomDatabase db = AlarmRoomDatabase.getDatabase(application);
         mAlarmDao = db.alarmDao();
         mAllAlarm = mAlarmDao.getOrderedWords();
     }
 
-    LiveData<List<Alarm>> getAllAlarm() {return mAllAlarm;}
+    public LiveData<List<Alarm>> getAllAlarm() {return mAllAlarm;}
 
-    LiveData<Integer> getOnNum(){ return mAlarmDao.getOnAlarms();}
+    public LiveData<Integer> getOnNum(){ return mAlarmDao.getOnAlarms();}
 
-    void insert(Alarm alarm){
+    public void insert(Alarm alarm){
         AlarmRoomDatabase.databaseWriteExecutor.execute(() ->{
             mAlarmDao.insert(alarm);
         });
     }
 
-    void update(Alarm alarm){
+    public void update(Alarm alarm){
         AlarmRoomDatabase.databaseWriteExecutor.execute(() ->{
             mAlarmDao.update(alarm);
         });
     }
 
-    void delete(Alarm alarm){
+    public void delete(Alarm alarm){
         AlarmRoomDatabase.databaseWriteExecutor.execute(() ->{
             mAlarmDao.delete(alarm);
         });

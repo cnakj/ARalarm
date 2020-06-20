@@ -1,18 +1,18 @@
-package com.example.aralarm;
+package com.example.aralarm.activity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.Serializable;
+import com.example.aralarm.data.Alarm;
+import com.example.aralarm.R;
+
 import java.util.UUID;
 
 public class SettingAlarmActivity extends AppCompatActivity {
@@ -35,10 +35,10 @@ public class SettingAlarmActivity extends AppCompatActivity {
         if(bundle != null){
             Alarm item = (Alarm) bundle.getSerializable("alarm");
             returnId = item.getId();
-            timePicker.setHour(Integer.parseInt(item.getHour()));
-            timePicker.setMinute(Integer.parseInt(item.getMinute()));
+            timePicker.setHour(item.getIntHour());
+            timePicker.setMinute(item.getIntMinute());
             dateText.setText(item.getYear() + "년 " + item.getMonth() + "월 " + item.getDay() + "일");
-            datePicker.updateDate(Integer.parseInt(item.getYear()), Integer.parseInt(item.getMonth())-1, Integer.parseInt(item.getDay()));
+            datePicker.updateDate(item.getIntYear(), item.getIntMonth()-1, item.getIntDay());
         }
         else{
             returnId = UUID.randomUUID().toString();

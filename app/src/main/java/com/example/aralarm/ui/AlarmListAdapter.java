@@ -1,4 +1,4 @@
-package com.example.aralarm;
+package com.example.aralarm.ui;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,13 +9,16 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.aralarm.R;
+import com.example.aralarm.data.Alarm;
+
 import java.util.List;
 
 public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder> {
 
     private List<Alarm> mAlarms;
     private final LayoutInflater mInflater;
-    AlarmListAdapter(Context context) {mInflater = LayoutInflater.from(context);}
+    public AlarmListAdapter(Context context) {mInflater = LayoutInflater.from(context);}
 
     private OnItemClickListener mListener = null;
     public interface OnItemClickListener{ void onItemClick(View v, int position); }
@@ -47,7 +50,7 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
             if(Integer.parseInt(current.getHour()) < 13)
                 holder.timeView.setText("오전 " + current.getHour() + "시 " + current.getMinute() + "분");
             else
-                holder.timeView.setText("오후 " + (Integer.parseInt(current.getHour()) - 12) + "시 " + current.getMinute() + "분");
+                holder.timeView.setText("오후 " + (current.getIntHour() - 12) + "시 " + current.getMinute() + "분");
             holder.on.setChecked(current.isOn());
         } else{
             holder.dateView.setText("No Date");
@@ -56,7 +59,7 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
         }
     }
 
-    void setAlarms(List<Alarm> alarms){
+    public void setAlarms(List<Alarm> alarms){
         mAlarms = alarms;
         notifyDataSetChanged();
     }

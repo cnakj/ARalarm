@@ -1,9 +1,12 @@
-package com.example.aralarm;
+package com.example.aralarm.ui;
 
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import com.example.aralarm.data.Alarm;
+import com.example.aralarm.data.AlarmRepository;
 
 import java.util.List;
 
@@ -19,7 +22,7 @@ public class AlarmViewModel extends AndroidViewModel {
         mAllAlarms = mRepository.getAllAlarm();
     }
 
-    LiveData<List<Alarm>> getAllAlarms() {return mAllAlarms;}
+    public LiveData<List<Alarm>> getAllAlarms() {return mAllAlarms;}
 
     public void insert(Alarm alarm){mRepository.insert(alarm);}
 
@@ -27,5 +30,5 @@ public class AlarmViewModel extends AndroidViewModel {
 
     public void delete(Alarm alarm){mRepository.delete(alarm);}
 
-    LiveData<Integer> getOnAlarms(){return mRepository.getOnNum();}
+    public LiveData<Integer> getOnAlarms(){return mRepository.getOnNum();}
 }

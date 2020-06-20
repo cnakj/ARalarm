@@ -1,4 +1,4 @@
-package com.example.aralarm;
+package com.example.aralarm.data;
 
 import android.content.Context;
 
