@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aralarm.data.Alarm;
+import com.example.aralarm.databinding.ActivityMainBinding;
 import com.example.aralarm.ui.AlarmListAdapter;
 import com.example.aralarm.notification.AlarmReceiver;
 import com.example.aralarm.ui.AlarmViewModel;
@@ -31,6 +32,7 @@ import java.util.Calendar;
 import static com.example.aralarm.activity.SettingAlarmActivity.RETURN_ALARM;
 
 public class MainActivity extends AppCompatActivity {
+    private static ActivityMainBinding binding;
 
     private AlarmViewModel mAlarmViewModel;
     public static final int NEW_ALARM_ACTIVITY_REQUEST_CODE = 1;
@@ -40,25 +42,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView onNumText =findViewById(R.id.txt_main_alarm_num);
-        RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
         final AlarmListAdapter adapter = new AlarmListAdapter(this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.mainRecyclerView.setAdapter(adapter);
+        binding.mainRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAlarmViewModel = new ViewModelProvider(this).get(AlarmViewModel.class);
 
         mAlarmViewModel.getOnAlarms().observe(this, onNum -> {
             Resources res = getResources();
             if(onNum<=0)
-                onNumText.setText(R.string.main_all_off);
+                binding.txtMainAlarmNum.setText(R.string.main_all_off);
             else
-                onNumText.setText(String.format(res.getString(R.string.main_num_on),onNum));
+                binding.txtMainAlarmNum.setText(String.format(res.getString(R.string.main_num_on),onNum));
         });
 
         mAlarmViewModel.getAllAlarms().observe(this, adapter::setAlarms);
 
-        FloatingActionButton addButton = findViewById(R.id.btn_main_add);
-        addButton.setOnClickListener(v -> {
+        binding.btnMainAdd.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SettingAlarmActivity.class);
             startActivityForResult(intent, NEW_ALARM_ACTIVITY_REQUEST_CODE);
         });
