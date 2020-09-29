@@ -16,7 +16,7 @@ public class LauncherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_launcher);
 
         Handler handler = new Handler();
-        handler.postDelayed(() -> goMainActivity(), 1500);
+        handler.postDelayed(this::goMainActivity, 1000);
     }
 
     public void goMainActivity(){
