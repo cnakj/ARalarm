@@ -12,7 +12,7 @@ import android.net.Uri;
 import androidx.core.app.NotificationCompat;
 
 import com.example.aralarm.R;
-import com.example.aralarm.activity.AlarmActivity;
+import com.example.aralarm.activity.GameActivity;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -24,7 +24,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent notificationIntent = new Intent(context, AlarmActivity.class);
+        Intent notificationIntent = new Intent(context, GameActivity.class);
         PendingIntent notificationPendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);

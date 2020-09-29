@@ -11,7 +11,7 @@ import android.widget.Button;
 
 import com.example.aralarm.R;
 
-public class AlarmActivity extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

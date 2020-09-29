@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,12 +58,14 @@ public class MainActivity extends AppCompatActivity {
 
         mAlarmViewModel.getAllAlarms().observe(this, adapter::setAlarms);
 
+        // 새로운 알람 추가
         FloatingActionButton addButton = findViewById(R.id.btn_main_add);
         addButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SettingAlarmActivity.class);
             startActivityForResult(intent, NEW_ALARM_ACTIVITY_REQUEST_CODE);
         });
 
+        // 기존 알람 변경
         adapter.setOnItemClickListener((v, position) -> {
             Intent intent = new Intent(MainActivity.this, SettingAlarmActivity.class);
             Alarm alarm = adapter.getAlarm(position);
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, NEW_ALARM_ACTIVITY_REQUEST_CODE);
         });
 
+        // 알람 삭제
         adapter.setOnItemLongClickListener((v, position) -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.delete_alarm);
@@ -87,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.show();
         });
 
+        // 스위치 토글
         adapter.setOnSwitchClickListener((v, position) -> {
             Alarm alarm = adapter.getAlarm(position);
             alarm.toggle(!alarm.isOn());
@@ -112,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             else if(requestCode == CHANGE_ALARM_ACTIVITY_REQUEST_CODE)
                 mAlarmViewModel.update(alarm);
 
+            assert alarm != null;
             onAlarm(alarm);
         }
         else if(resultCode == RESULT_CANCELED){
@@ -124,11 +130,13 @@ public class MainActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         calendar.set(alarm.getIntYear(), alarm.getIntMonth() - 1, alarm.getIntDay(), alarm.getIntHour(), alarm.getIntMinute(), 0);
 
-        setAlarmNotification(calendar, alarm.getPendingId());
+        Log.i("MYAPP", "알람 설정할 떄 계산한 id는 " + alarm.getPendingID());
+        setAlarmNotification(calendar, alarm.getPendingID());
     }
 
     public void offAlarm(Alarm alarm){
-        unsetAlarmNotification(alarm.getPendingId());
+        Log.i("MYAPP", "알람 끌때 계산한 id는 " + alarm.getPendingID());
+        unsetAlarmNotification(alarm.getPendingID());
     }
 
     public void setAlarmNotification(Calendar calendar, int requestCode) {
@@ -136,35 +144,35 @@ public class MainActivity extends AppCompatActivity {
         PackageManager pm = this.getPackageManager();
         ComponentName receiver = new ComponentName(this, DeviceBootReceiver.class);
         Intent alarmIntent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, alarmIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         if (alarmManager != null) {
-            if(Build.VERSION.SDK_INT >= 23)
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-            else
-                if(Build.VERSION.SDK_INT >= 19)
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-                else
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
+            Log.i("MYAPP", "알람설정 id는 " + requestCode);
             pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
             Toast.makeText(getApplicationContext(), R.string.main_set, Toast.LENGTH_SHORT).show();
         }
+
     }
+
+
 
     public void unsetAlarmNotification(int requestCode){
         PackageManager pm = this.getPackageManager();
         ComponentName receiver = new ComponentName(this, DeviceBootReceiver.class);
         Intent alarmIntent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, alarmIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, alarmIntent, PendingIntent.FLAG_NO_CREATE);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        if (pendingIntent != null && alarmManager != null)
+        Log.i("MYAPP", "알람취소 id는 " + requestCode);
+        if (pendingIntent != null){
             alarmManager.cancel(pendingIntent);
 
-        pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-        Toast.makeText(getApplicationContext(), R.string.main_unset, Toast.LENGTH_SHORT).show();
+            pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            Toast.makeText(getApplicationContext(), R.string.main_unset, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

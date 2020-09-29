@@ -34,9 +34,6 @@ public class Alarm implements Serializable {
     @ColumnInfo(name = "isOn")
     private boolean mOn;
 
-    @Ignore
-    private int pendingId;
-
     public Alarm(String id, @NonNull String mYear, @NonNull String mMonth, @NonNull String mDay, @NonNull String mHour, @NonNull String mMinute, boolean mOn) {
         this.id = id;
         this.mYear = mYear;
@@ -45,7 +42,6 @@ public class Alarm implements Serializable {
         this.mHour = mHour;
         this.mMinute = mMinute;
         this.mOn = mOn;
-        this.pendingId = RandomID.nextValue();
     }
 
     public Alarm(String mId, @NonNull int mYear, @NonNull int mMonth, @NonNull int mDay, @NonNull int mHour, @NonNull int mMinute, boolean mOn) {
@@ -56,7 +52,6 @@ public class Alarm implements Serializable {
         this.mHour = Integer.toString(mHour);
         this.mMinute = Integer.toString(mMinute);
         this.mOn = mOn;
-        this.pendingId = RandomID.nextValue();
     }
 
     public String getId() { return id; }
@@ -85,5 +80,7 @@ public class Alarm implements Serializable {
 
     public void toggle(boolean mOn) { this.mOn = mOn; }
 
-    public int getPendingId() { return pendingId; }
+    public int getPendingID(){
+        return this.getIntYear()*12 + this.getIntMonth()*34 + this.getIntDay()*56 + this.getIntHour()*78 + this.getIntMinute()*9;
+    }
 }
