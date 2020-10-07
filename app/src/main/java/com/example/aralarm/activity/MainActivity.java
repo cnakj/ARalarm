@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             builder.setMessage(R.string.delete_alarm);
             builder.setPositiveButton(R.string.delete_ok, (dialog, which) -> {
                 Alarm alarm = adapter.getAlarm(position);
+                offAlarm(alarm);
                 mAlarmViewModel.delete(alarm);
             });
             builder.setNegativeButton(R.string.delete_no, (dialog, which) -> {
