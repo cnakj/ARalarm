@@ -12,44 +12,31 @@ import android.net.Uri;
 
 import androidx.core.app.NotificationCompat;
 
+import com.example.aralarm.ApplicationClass;
 import com.example.aralarm.R;
 import com.example.aralarm.activity.GameActivity;
 
 public class AlarmReceiver extends BroadcastReceiver {
+    private ApplicationClass applicationClass;
 
-    private String CHANNEL_ID = "aralarm";
-    private String CHANNEL_NAME = "aralarm";
-    private String CHANNEL_DESCRIPTION = "alalarm";
     private int NOTIFICATION_ID = 1234;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        applicationClass = (ApplicationClass)context.getApplicationContext();
+
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-        Ringtone ringtone = RingtoneManager.getRingtone(context, notification);
-        ringtone.play();
+
+        applicationClass.ringtone.play();
 
         Intent notificationIntent = new Intent(context, GameActivity.class);
         PendingIntent notificationPendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
-
-        if (android.os.Build.VERSION.SDK_INT >= 26) {
-            builder.setSmallIcon(R.drawable.ic_baseline_alarm_24); // mipmap x
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH);
-            channel.setDescription(CHANNEL_DESCRIPTION);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }else builder.setSmallIcon(R.mipmap.ic_launcher); // mipmap
-
-
-        builder.setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setWhen(System.currentTimeMillis())
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, applicationClass.CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_baseline_alarm_24)
                 .setContentTitle("알람")
                 .setFullScreenIntent(notificationPendingIntent, true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM);
 
         if(notificationManager != null)

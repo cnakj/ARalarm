@@ -9,21 +9,27 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.aralarm.ApplicationClass;
 import com.example.aralarm.R;
 
 public class GameActivity extends AppCompatActivity {
+
+    private ApplicationClass applicationClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm);
 
+        applicationClass = (ApplicationClass)getApplicationContext();
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
         Button btn_off = findViewById(R.id.btn_off);
         btn_off.setOnClickListener(v -> {
             notificationManager.cancel(1234);
-            Intent intent = new Intent();
+            applicationClass.ringtone.stop();
+
+//            Intent intent = new Intent();
             //intent.putExtra()
             finish();
         });
