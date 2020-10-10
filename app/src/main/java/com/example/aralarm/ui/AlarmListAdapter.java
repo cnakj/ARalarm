@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -33,8 +34,17 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
     public void setOnSwitchClickListener(OnSwitchClickListener listener){ mSwitchListener = listener;}
 
     public Alarm getAlarm(int pos){
-        return mAlarms.get(pos);
+        return  mAlarms.get(pos);
     }
+
+    private boolean checkVis = false;
+
+    public void showCheckBox(boolean checkVis){
+        this.checkVis = checkVis;
+
+        notifyDataSetChanged();
+    }
+
 
     @Override
     public AlarmViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
@@ -44,6 +54,7 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
 
     @Override
     public void onBindViewHolder(AlarmViewHolder holder, int position){
+        holder.itemView.setOnClickListener(v -> holder.del.performClick());
         if(mAlarms != null){
             Alarm current = mAlarms.get(position);
             holder.dateView.setText(current.getYear() + "년 " + current.getMonth() + "월 " + current.getDay() + "일");
@@ -52,6 +63,15 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
             else
                 holder.timeView.setText("오후 " + (current.getIntHour() - 12) + "시 " + current.getMinute() + "분");
             holder.on.setChecked(current.isOn());
+
+            if(checkVis == true){
+                holder.del.setVisibility(View.VISIBLE);
+                holder.on.setVisibility(View.GONE);
+            }
+            else{
+                holder.del.setVisibility(View.GONE);
+                holder.on.setVisibility(View.VISIBLE);
+            }
         } else{
             holder.dateView.setText("No Date");
             holder.timeView.setText("No Time");
@@ -75,12 +95,14 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
         private final TextView dateView;
         private final TextView timeView;
         private final Switch on;
+        private final CheckBox del;
 
         private AlarmViewHolder(View itemView){
             super(itemView);
             dateView = itemView.findViewById(R.id.txt_alarm_date);
             timeView = itemView.findViewById(R.id.txt_alarm_time);
             on = itemView.findViewById(R.id.switch_alarm);
+            del = itemView.findViewById(R.id.cb_delete);
 
             itemView.setOnClickListener(v -> {
                 int pos = getAdapterPosition();

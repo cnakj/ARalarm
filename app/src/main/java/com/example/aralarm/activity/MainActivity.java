@@ -77,19 +77,23 @@ public class MainActivity extends AppCompatActivity {
 
         // 알람 삭제
         adapter.setOnItemLongClickListener((v, position) -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(R.string.delete_alarm);
-            builder.setPositiveButton(R.string.delete_ok, (dialog, which) -> {
-                Alarm alarm = adapter.getAlarm(position);
-                offAlarm(alarm);
-                mAlarmViewModel.delete(alarm);
-            });
-            builder.setNegativeButton(R.string.delete_no, (dialog, which) -> {
-                //취소
-            });
+            adapter.showCheckBox(true);
 
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setMessage(R.string.delete_alarm);
+//            builder.setPositiveButton(R.string.delete_ok, (dialog, which) -> {
+//                Alarm alarm = adapter.getAlarm(position);
+//                offAlarm(alarm);
+//                mAlarmViewModel.delete(alarm);
+//            });
+//            builder.setNegativeButton(R.string.delete_no, (dialog, which) -> {
+//                //취소
+//            });
+//
+//            AlertDialog alertDialog = builder.create();
+//            alertDialog.show();
+
         });
 
         // 스위치 토글
