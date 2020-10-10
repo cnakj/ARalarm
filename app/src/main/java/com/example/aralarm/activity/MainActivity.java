@@ -11,6 +11,8 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView onNumText =findViewById(R.id.txt_main_alarm_num);
+        TextView onNumText = findViewById(R.id.txt_main_alarm_num);
+        Button btnDelete = findViewById(R.id.btn_delete);
+        Button btnAll = findViewById(R.id.btn_all);
         RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
         final AlarmListAdapter adapter = new AlarmListAdapter(this);
         recyclerView.setAdapter(adapter);
@@ -75,25 +79,40 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, NEW_ALARM_ACTIVITY_REQUEST_CODE);
         });
 
+        btnAll.setOnClickListener(v -> {
+            // 전체 선택 되어있는 상태
+            if(adapter.selectAll == true) {
+                btnAll.setText(R.string.main_all_check);
+                adapter.selectAll = false;
+                adapter.clearSelectedItem();
+            }
+            // 전체 해제 되어있는 상태
+            else{
+                btnAll.setText(R.string.main_all_uncheck);
+                adapter.selectAll = true;
+                adapter.selectAllItem();
+            }
+        });
+
         // 알람 삭제
+        btnDelete.setOnClickListener(v -> {
+            Log.i("MYAPP", adapter.getItemCount() + "");
+            for(int i = 0; i < adapter.mSelectedItems.size(); i++){
+                Alarm alarm = adapter.getAlarm(i);
+                if(alarm.isOn())
+                    offAlarm(alarm);
+                mAlarmViewModel.delete(alarm);
+            }
+            adapter.clearSelectedItem();
+        });
+
         adapter.setOnItemLongClickListener((v, position) -> {
             adapter.showCheckBox(true);
-
-
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//            builder.setMessage(R.string.delete_alarm);
-//            builder.setPositiveButton(R.string.delete_ok, (dialog, which) -> {
-//                Alarm alarm = adapter.getAlarm(position);
-//                offAlarm(alarm);
-//                mAlarmViewModel.delete(alarm);
-//            });
-//            builder.setNegativeButton(R.string.delete_no, (dialog, which) -> {
-//                //취소
-//            });
-//
-//            AlertDialog alertDialog = builder.create();
-//            alertDialog.show();
-
+            adapter.deleteMode = true;
+            adapter.selectAll = false;
+            btnAll.setVisibility(View.VISIBLE);
+            btnDelete.setVisibility(View.VISIBLE);
+            addButton.setVisibility(View.INVISIBLE);
         });
 
         // 스위치 토글

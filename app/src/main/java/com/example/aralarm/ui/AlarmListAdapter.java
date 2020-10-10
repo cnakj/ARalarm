@@ -1,6 +1,8 @@
 package com.example.aralarm.ui;
 
 import android.content.Context;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +47,29 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
         notifyDataSetChanged();
     }
 
+    public boolean deleteMode = false;
+    public boolean selectAll = false;
+    public SparseBooleanArray mSelectedItems = new SparseBooleanArray(0);
+
+    public void clearSelectedItem() {
+        int position;
+
+        for (int i = 0; i < mSelectedItems.size(); i++) {
+            position = mSelectedItems.keyAt(i);
+            mSelectedItems.put(position, false);
+            notifyItemChanged(position);
+        }
+
+        mSelectedItems.clear();
+    }
+
+    public void selectAllItem() {
+        for (int i = 0; i < mAlarms.size(); i++){
+            mSelectedItems.put(i, true);
+            notifyItemChanged(i);
+        }
+    }
+
 
     @Override
     public AlarmViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
@@ -72,6 +97,15 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
                 holder.del.setVisibility(View.GONE);
                 holder.on.setVisibility(View.VISIBLE);
             }
+
+            if (deleteMode){
+                if ( mSelectedItems.get(position, false) ){
+                    holder.del.setChecked(true);
+                } else {
+                    holder.del.setChecked(false);
+                }
+            }
+
         } else{
             holder.dateView.setText("No Date");
             holder.timeView.setText("No Time");
@@ -103,6 +137,24 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
             timeView = itemView.findViewById(R.id.txt_alarm_time);
             on = itemView.findViewById(R.id.switch_alarm);
             del = itemView.findViewById(R.id.cb_delete);
+
+            del.setOnClickListener(v -> {
+                int pos = getAdapterPosition();
+                if(deleteMode){
+                    Log.i("MYAPP", "deletemode 들어옴");
+                    if (mSelectedItems.get(pos, false)) {
+                        Log.i("MYAPP", "mSelected 선택되어있는거 눌렀을때" + mSelectedItems.size());
+                        mSelectedItems.delete(pos);
+                        del.setChecked(false);
+                        notifyItemChanged(pos);
+                    } else {
+                        Log.i("MYAPP", "mSelected 빈거 눌렀을때" + mSelectedItems.size());
+                        mSelectedItems.put(pos, true);
+                        del.setChecked(true);
+                        notifyItemChanged(pos);
+                    }
+                }
+            });
 
             itemView.setOnClickListener(v -> {
                 int pos = getAdapterPosition();
