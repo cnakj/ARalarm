@@ -96,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
         // 알람 삭제
         btnDelete.setOnClickListener(v -> {
-            Log.i("MYAPP", adapter.getItemCount() + "");
             for(int i = 0; i < adapter.mSelectedItems.size(); i++){
                 Alarm alarm = adapter.getAlarm(i);
                 if(alarm.isOn())
@@ -153,13 +152,10 @@ public class MainActivity extends AppCompatActivity {
     public void onAlarm(Alarm alarm){
         Calendar calendar = Calendar.getInstance();
         calendar.set(alarm.getIntYear(), alarm.getIntMonth() - 1, alarm.getIntDay(), alarm.getIntHour(), alarm.getIntMinute(), 0);
-
-        Log.i("MYAPP", "알람 설정할 떄 계산한 id는 " + alarm.getPendingID());
         setAlarmNotification(calendar, alarm.getPendingID());
     }
 
     public void offAlarm(Alarm alarm){
-        Log.i("MYAPP", "알람 끌때 계산한 id는 " + alarm.getPendingID());
         unsetAlarmNotification(alarm.getPendingID());
     }
 
@@ -173,8 +169,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (alarmManager != null) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-
-            Log.i("MYAPP", "알람설정 id는 " + requestCode);
             pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
             Toast.makeText(getApplicationContext(), R.string.main_set, Toast.LENGTH_SHORT).show();
         }
@@ -190,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, requestCode, alarmIntent, PendingIntent.FLAG_NO_CREATE);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        Log.i("MYAPP", "알람취소 id는 " + requestCode);
         if (pendingIntent != null){
             alarmManager.cancel(pendingIntent);
 

@@ -141,14 +141,11 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
             del.setOnClickListener(v -> {
                 int pos = getAdapterPosition();
                 if(deleteMode){
-                    Log.i("MYAPP", "deletemode 들어옴");
                     if (mSelectedItems.get(pos, false)) {
-                        Log.i("MYAPP", "mSelected 선택되어있는거 눌렀을때" + mSelectedItems.size());
                         mSelectedItems.delete(pos);
                         del.setChecked(false);
                         notifyItemChanged(pos);
                     } else {
-                        Log.i("MYAPP", "mSelected 빈거 눌렀을때" + mSelectedItems.size());
                         mSelectedItems.put(pos, true);
                         del.setChecked(true);
                         notifyItemChanged(pos);
