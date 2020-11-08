@@ -29,10 +29,6 @@ public class GameActivity extends AppCompatActivity {
             finish();
         });
 
-        Button btn_game = findViewById(R.id.btn_game);
-        btn_game.setOnClickListener(v -> {
-            // unity 게임으로 연결되게.
-        });
 
     }
 }
