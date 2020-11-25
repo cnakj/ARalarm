@@ -1,7 +1,6 @@
 package com.example.aralarm.ui;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.aralarm.R;
 import com.example.aralarm.data.Alarm;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder> {
@@ -39,10 +39,10 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
         return  mAlarms.get(pos);
     }
 
-    private boolean checkVis = false;
+    private boolean checkVisibility = false;
 
-    public void showCheckBox(boolean checkVis){
-        this.checkVis = checkVis;
+    public void showCheckBox(boolean isVisible){
+        this.checkVisibility = isVisible;
 
         notifyDataSetChanged();
     }
@@ -87,9 +87,18 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
                 holder.timeView.setText("오전 " + current.getHour() + "시 " + current.getMinute() + "분");
             else
                 holder.timeView.setText("오후 " + (current.getIntHour() - 12) + "시 " + current.getMinute() + "분");
-            holder.on.setChecked(current.isOn());
 
-            if(checkVis == true){
+            // if 시간 지났으면 off로 아니면 isOn대로 --> 아 근데 지금 db랑 연동 안돼서 ~개의 알람 켜져있다고 뜸 ㅜ
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime set = LocalDateTime.of(current.getIntYear(), current.getIntMonth(), current.getIntDay(), current.getIntHour(), current.getIntMinute());
+            if(set.isAfter(now)){
+                holder.on.setChecked(current.isOn());
+            }
+            else{
+                holder.on.setChecked(false);
+            }
+
+            if(checkVisibility){
                 holder.del.setVisibility(View.VISIBLE);
                 holder.on.setVisibility(View.GONE);
             }
@@ -99,11 +108,7 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
             }
 
             if (deleteMode){
-                if ( mSelectedItems.get(position, false) ){
-                    holder.del.setChecked(true);
-                } else {
-                    holder.del.setChecked(false);
-                }
+                holder.del.setChecked(mSelectedItems.get(position, false));
             }
 
         } else{
@@ -144,16 +149,15 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
                     if (mSelectedItems.get(pos, false)) {
                         mSelectedItems.delete(pos);
                         del.setChecked(false);
-                        notifyItemChanged(pos);
                     } else {
                         mSelectedItems.put(pos, true);
                         del.setChecked(true);
-                        notifyItemChanged(pos);
                     }
+                    notifyItemChanged(pos);
                 }
             });
 
-            itemView.setOnClickListener(v -> {
+            timeView.setOnClickListener(v -> {
                 int pos = getAdapterPosition();
                 if(pos != RecyclerView.NO_POSITION)
                     if(mListener != null)

@@ -1,3 +1,4 @@
+
 package com.example.aralarm.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,7 +43,11 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Button btn2 = findViewById(R.id.btn_off);
-        btn2.setVisibility(View.VISIBLE);
+
+        Button btn_game = findViewById(R.id.btn_game);
+        btn_game.setVisibility(View.INVISIBLE);
+
+        Button btn_off = findViewById(R.id.btn_off);
+        btn_off.setVisibility(View.VISIBLE);
     }
 }

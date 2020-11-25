@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.aralarm.ApplicationClass;
 import com.example.aralarm.data.Alarm;
 import com.example.aralarm.ui.AlarmListAdapter;
 import com.example.aralarm.notification.AlarmReceiver;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         TextView onNumText = findViewById(R.id.txt_main_alarm_num);
         Button btnDelete = findViewById(R.id.btn_delete);
         Button btnAll = findViewById(R.id.btn_all);
+        Button btnCancel = findViewById(R.id.btn_cancel);
         RecyclerView recyclerView = findViewById(R.id.main_recyclerView);
         final AlarmListAdapter adapter = new AlarmListAdapter(this);
         recyclerView.setAdapter(adapter);
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mAlarmViewModel.getAllAlarms().observe(this, adapter::setAlarms);
+
 
         // 새로운 알람 추가
         FloatingActionButton addButton = findViewById(R.id.btn_main_add);
@@ -79,9 +82,21 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, NEW_ALARM_ACTIVITY_REQUEST_CODE);
         });
 
+
+        // 삭제 모드
+        adapter.setOnItemLongClickListener((v, position) -> {
+            adapter.showCheckBox(true);
+            adapter.deleteMode = true;
+            adapter.selectAll = false;
+            btnAll.setVisibility(View.VISIBLE);
+            btnDelete.setVisibility(View.VISIBLE);
+            btnCancel.setVisibility(View.VISIBLE);
+            addButton.setVisibility(View.INVISIBLE);
+        });
+
         btnAll.setOnClickListener(v -> {
             // 전체 선택 되어있는 상태
-            if(adapter.selectAll == true) {
+            if(adapter.selectAll) {
                 btnAll.setText(R.string.main_all_check);
                 adapter.selectAll = false;
                 adapter.clearSelectedItem();
@@ -102,16 +117,26 @@ public class MainActivity extends AppCompatActivity {
                     offAlarm(alarm);
                 mAlarmViewModel.delete(alarm);
             }
+
+            adapter.showCheckBox(false);
+            adapter.deleteMode = false;
             adapter.clearSelectedItem();
+            btnAll.setVisibility(View.INVISIBLE);
+            btnDelete.setVisibility(View.INVISIBLE);
+            btnCancel.setVisibility(View.INVISIBLE);
+            addButton.setVisibility(View.VISIBLE);
         });
 
-        adapter.setOnItemLongClickListener((v, position) -> {
-            adapter.showCheckBox(true);
-            adapter.deleteMode = true;
-            adapter.selectAll = false;
-            btnAll.setVisibility(View.VISIBLE);
-            btnDelete.setVisibility(View.VISIBLE);
-            addButton.setVisibility(View.INVISIBLE);
+        // 삭제화면 취소
+        btnCancel.setOnClickListener(v -> {
+            adapter.showCheckBox(false);
+            adapter.deleteMode = false;
+            adapter.clearSelectedItem();
+            btnAll.setText(R.string.main_all_check);
+            btnAll.setVisibility(View.INVISIBLE);
+            btnDelete.setVisibility(View.INVISIBLE);
+            btnCancel.setVisibility(View.INVISIBLE);
+            addButton.setVisibility(View.VISIBLE);
         });
 
         // 스위치 토글
@@ -144,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
             onAlarm(alarm);
         }
         else if(resultCode == RESULT_CANCELED){
-            Toast.makeText(getApplicationContext(), R.string.main_not_saved, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), R.string.main_not_saved, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -170,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         if (alarmManager != null) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-            Toast.makeText(getApplicationContext(), R.string.main_set, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), R.string.main_set, Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -188,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
             alarmManager.cancel(pendingIntent);
 
             pm.setComponentEnabledSetting(receiver, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-            Toast.makeText(getApplicationContext(), R.string.main_unset, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), R.string.main_unset, Toast.LENGTH_SHORT).show();
         }
     }
 

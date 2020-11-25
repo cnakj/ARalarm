@@ -37,5 +37,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         if(notificationManager != null)
             notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
+
 }
 

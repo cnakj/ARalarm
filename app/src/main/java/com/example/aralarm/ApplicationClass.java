@@ -5,10 +5,13 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.media.AudioAttributes;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 
 public class ApplicationClass extends Application {
 
@@ -16,14 +19,19 @@ public class ApplicationClass extends Application {
     private String CHANNEL_NAME = "aralarm";
     private String CHANNEL_DESCRIPTION = "alalarm";
 
-    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+    Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
     public Ringtone ringtone;
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void onCreate() {
         super.onCreate();
 
-        ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        ringtone = RingtoneManager.getRingtone(getApplicationContext(), uri);
+
+        //추가
+        AudioAttributes audioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build();
+        ringtone.setAudioAttributes(audioAttributes);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
