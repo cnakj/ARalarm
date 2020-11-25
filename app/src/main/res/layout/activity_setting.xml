@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="50dp">
+    android:background="@color/bg">
 
     <TimePicker
         android:id="@+id/picker_setting_time"
@@ -17,6 +17,7 @@
         android:scrollbarSize="10dp"
         android:timePickerMode="spinner"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -37,9 +38,9 @@
         android:id="@+id/btn_setting_calendar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:background="#00000000"
+        android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/setting_calendar"
+        android:padding="20dp"
         android:tint="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/txt_setting_calendar"
@@ -67,7 +68,6 @@
         android:text="@string/setting_save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

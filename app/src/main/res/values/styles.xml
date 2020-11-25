@@ -5,6 +5,8 @@
         <item name="colorPrimary">#EC7357</item>
         <item name="colorPrimaryDark">#754F44</item>
         <item name="colorAccent">#FDD692</item>
+
+        <item name="colorControlHighlight">#32EC7357</item>
     </style>
 
 </resources>
