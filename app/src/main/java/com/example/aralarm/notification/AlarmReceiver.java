@@ -30,7 +30,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, applicationClass.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_baseline_alarm_24)
-                .setContentTitle("알람")
+                .setContentTitle("여기를 눌러 알람을 끄세요")
                 .setFullScreenIntent(notificationPendingIntent, true)
                 .setCategory(NotificationCompat.CATEGORY_ALARM);
 

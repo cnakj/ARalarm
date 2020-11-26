@@ -30,19 +30,22 @@ import com.example.aralarm.notification.DeviceBootReceiver;
 import com.example.aralarm.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 
 import static com.example.aralarm.activity.SettingAlarmActivity.RETURN_ALARM;
 
 public class MainActivity extends AppCompatActivity {
 
-    private AlarmViewModel mAlarmViewModel;
+    public static Context mContext;
+    public static AlarmViewModel mAlarmViewModel;
     public static final int NEW_ALARM_ACTIVITY_REQUEST_CODE = 1;
     public static final int CHANGE_ALARM_ACTIVITY_REQUEST_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         setContentView(R.layout.activity_main);
         TextView onNumText = findViewById(R.id.txt_main_alarm_num);
         Button btnDelete = findViewById(R.id.btn_delete);
@@ -63,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mAlarmViewModel.getAllAlarms().observe(this, adapter::setAlarms);
-
 
         // 새로운 알람 추가
         FloatingActionButton addButton = findViewById(R.id.btn_main_add);
@@ -175,9 +177,16 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onAlarm(Alarm alarm){
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(alarm.getIntYear(), alarm.getIntMonth() - 1, alarm.getIntDay(), alarm.getIntHour(), alarm.getIntMinute(), 0);
-        setAlarmNotification(calendar, alarm.getPendingID());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime set = LocalDateTime.of(alarm.getIntYear(), alarm.getIntMonth(), alarm.getIntDay(), alarm.getIntHour(), alarm.getIntMinute());
+        if(set.isAfter(now)){
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(alarm.getIntYear(), alarm.getIntMonth() - 1, alarm.getIntDay(), alarm.getIntHour(), alarm.getIntMinute(), 0);
+            setAlarmNotification(calendar, alarm.getPendingID());
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "현재시간 이전으로는 알람을 설정할 수 없습니다.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void offAlarm(Alarm alarm){

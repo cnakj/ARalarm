@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.aralarm.R;
+import com.example.aralarm.activity.MainActivity;
 import com.example.aralarm.data.Alarm;
 
 import java.time.LocalDateTime;
@@ -95,7 +96,7 @@ public class AlarmListAdapter extends RecyclerView.Adapter<AlarmListAdapter.Alar
                 holder.on.setChecked(current.isOn());
             }
             else{
-                holder.on.setChecked(false);
+                MainActivity.mAlarmViewModel.delete(current);
             }
 
             if(checkVisibility){
